@@ -69,6 +69,66 @@ public class DepartmentService {
 
     }
 
+    /**
+     * Department is edited by this method.
+     * @param id
+     * @param departmentDto
+     * @return ApiResponse
+     */
+    public ApiResponse editeDepartment(Integer id, DepartmentDto departmentDto) {
+
+        /*
+        * is there an edited department.
+        * */
+        boolean exist = departmentRepository.existsByNameAndProgrammingLanguageIdAndIdNot(
+                departmentDto.getName(),
+                departmentDto.getProgrammingLanguageId(),
+                id);
+
+        if (exist)
+            return new ApiResponse(false, "this department already exist!");
+
+        /*
+        * Programming language is found by programmingLanguageId.
+        * */
+        Optional<ProgrammingLanguage> optionalProgrammingLanguage = programmingLanguageRepository
+                .findById(departmentDto.getProgrammingLanguageId());
+        if (optionalProgrammingLanguage.isEmpty())
+            return new ApiResponse(false, "Programming language not found!");
+        ProgrammingLanguage programmingLanguage = optionalProgrammingLanguage.get();
+
+        /*
+        * Department is found by id.
+        * */
+        Optional<Department> optionalDepartment = departmentRepository.findById(id);
+        if (optionalDepartment.isEmpty())
+            return new ApiResponse(false, "department not found!");
+
+        /*
+        * to edit department
+        * */
+        Department department = optionalDepartment.get();
+        department.setName(departmentDto.getName());
+        department.setStarCount(departmentDto.getStarCount());
+        department.setShortInfo(departmentDto.getShortInfo());
+        department.setProgrammingLanguage(programmingLanguage);
+
+        departmentRepository.save(department);
+        return new ApiResponse(true, "department edited!");
+    }
+
+    /**
+     * Department is deleted by this method.
+     * @param id
+     * @return ApiResponse
+     */
+    public ApiResponse deleteDepartment(Integer id) {
+        Optional<Department> optionalDepartment = departmentRepository.findById(id);
+        if (optionalDepartment.isEmpty())
+            return new ApiResponse(false, "department not found!");
+        departmentRepository.deleteById(id);
+        return new ApiResponse(true, "department deleted!");
+    }
 
 }
 
