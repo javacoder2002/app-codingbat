@@ -61,7 +61,7 @@ public class UserController {
      * @param userDto
      * @return ApiResponse
      */
-    @PutMapping
+    @PutMapping("/{id}")
     public HttpEntity<ApiResponse> editeUser(@PathVariable Integer id,
                                              @Valid @RequestBody UserDto userDto){
         ApiResponse apiResponse = userService.editeUser(id, userDto);
